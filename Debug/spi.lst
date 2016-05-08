@@ -1,0 +1,798 @@
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   1
+
+
+PC     Object              I  Line    Source 
+                           A     1    ; Zilog Z8 Encore! ANSI C Compiler Release 3.60
+                           A     2    ; -nolocalcse -optsize -fastcall -const=RAM -model=S
+                           A     3    ; -nooptlink -regvar -reduceopt -debug -norevaa -peephole
+                           A     4    ; -alias 
+                           A     5    	DEFINE spi_TEXT,SPACE=ROM
+                           A     6    	FILE	"..\SRC\SPI.C"
+                           A     7    .debug "C"
+                           A     8    	SEGMENT ROM_DATA
+                           A     9    
+                           A    10    
+                           A    11    ;**************************** _Init_SPI ***************************
+                           A    12    ;Name                         Addr/Register   Size   Type
+                           A    13    ;mode                           <optimized>      0   variable
+                           A    14    ;ctl                            <optimized>      0   variable
+                           A    15    ;stat                           <optimized>      0   variable
+                           A    16    
+                           A    17    
+                           A    18    ; Aggregate Stack Size: 0 (words)
+                           A    19    
+                           A    20    
+                           A    21    	.FRAME _n_Init_SPI,?_n_Init_SPI,RDATA
+                           A    22    	SEGMENT spi_TEXT
+000000                     A    23    _Init_SPI:
+                           A    24    .define "_Init_SPI"
+                           A    25    .value _Init_SPI
+                           A    26    .class 2
+                           A    27    .type 65
+                           A    28    .type 0
+                           A    29    .endef
+                           A    30    .begfunc "Init_SPI",11,"_Init_SPI"
+                           A    31    ;    1	#include <eZ8.h>
+                           A    32    ;    2	#include "SPI.h"
+                           A    33    ;    3	
+                           A    34    ;    4	/*-------------------------------------------------------------------------------
+                           A    35    ;    5	**  Routine: Init_SPI
+                           A    36    ;    6	**  Parameters: void
+                           A    37    ;    7	**  Return: void
+                           A    38    ;    8	**  Purpose: Initalize the SPI controller to Master and set baud rate generator
+                           A    39    ;    9	--------------------------------------------------------------------------------*/
+                           A    40    ;   10	void Init_SPI(void)
+                           A    41    ;   11	{
+                           A    42    .define "stat"
+                           A    43    .class 4
+                           A    44    .reg -1
+                           A    45    .type 2
+                           A    46    .type 0
+                           A    47    .endef
+                           A    48    .define "ctl"
+                           A    49    .class 4
+                           A    50    .reg -1
+                           A    51    .type 2
+                           A    52    .type 0
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   2
+
+
+PC     Object              I  Line    Source spi.src
+                           A    53    .endef
+                           A    54    .define "mode"
+                           A    55    .class 4
+                           A    56    .reg -1
+                           A    57    .type 2
+                           A    58    .type 0
+                           A    59    .endef
+000000 70EF                A    60    	PUSH	R15
+000002 84FFFF              A    61    	LDX	R15,4095
+                           A    62    ;   12		char ctl = '';
+                           A    63    .line 12
+                           A    64    ;   13		char mode = '';
+                           A    65    .line 13
+                           A    66    ;   14		char stat = '';
+                           A    67    .line 14
+                           A    68    ;   15	
+                           A    69    ;   16	    // Set up SPI i/o pins
+                           A    70    ;   17		//PCADDR = 0x02;
+                           A    71    ;   18	    PCAF = SPIPort;                 // Alternate Function: Set PC5=MISO, PC4=MOSI, PC3=SCK,
+                           A    72    .line 18
+000005 E9020FD8            A    73    	LDX	4056,#2
+000009 E93C0FD9            A    74    	LDX	4057,#60
+                           A    75    ;   19	    PCADDR = 0x00;                  // Advised to avoid inadvertent changes to port sub-reg
+                           A    76    .line 19
+00000D E9000FD8            A    77    	LDX	4056,#-0
+                           A    78    ;   20	
+                           A    79    ;   21	    // Set up SPI Registers  0x03; //
+                           A    80    ;   22	    SPICTL = PHASE | MMEN | SPIEN & ~CLKPOL;        // SCK Phase One, SPI Master, SPI enabl
+                           A    81    .line 22
+000011 E9130F61            A    82    	LDX	3937,#19
+                           A    83    ;   23	
+                           A    84    ;   24	    SPIMODE |= SSIO;                // Slave Select i/o: Set SS as o/p ::: &= 0xFC; //
+                           A    85    .line 24
+000015 49020F63            A    86    	ORX	3939,#2
+                           A    87    ;   25			
+                           A    88    ;   26	    // Load the baud rate register to 100 kHz (ADE7758 can clock at 10 MHz)
+                           A    89    ;   27	    SPIBRH = (char)(SPIBRG >> 8);
+                           A    90    .line 27
+000019 E9000F66            A    91    	LDX	3942,#-0
+                           A    92    ;   28	    SPIBRL = (char)(SPIBRG & 0xFF);
+                           A    93    .line 28
+00001D E95C0F67            A    94    	LDX	3943,#92
+                           A    95    ;   29	}
+                           A    96    .line 29
+000021 50EF                A    97    	POP	R15
+000023 AF                  A    98    	RET	
+                           A    99    .endfunc "Init_SPI",29,"_Init_SPI"
+                           A   100    	SEGMENT ROM_DATA
+                           A   101    
+                           A   102    
+                           A   103    ;**************************** _send_SPI ***************************
+                           A   104    ;Name                         Addr/Register   Size   Type
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   3
+
+
+PC     Object              I  Line    Source spi.src
+                           A   105    ;_EI                                 IMPORT  -----   function
+                           A   106    ;_SPI_TDRE                           STATIC  -----   function
+                           A   107    ;_DI                                 IMPORT  -----   function
+                           A   108    ;t                                       R0      0   variable
+                           A   109    ;data                                    R8      0   parameter
+                           A   110    
+                           A   111    
+                           A   112    ; Aggregate Stack Size: -1 (words)
+                           A   113    
+                           A   114    
+                           A   115    	.FRAME _n_send_SPI,?_n_send_SPI,RDATA
+                           A   116    	.FCALL _n_SPI_TDRE
+                           A   117    	SEGMENT spi_TEXT
+000024                     A   118    _send_SPI:
+                           A   119    .define "_send_SPI"
+                           A   120    .value _send_SPI
+                           A   121    .class 2
+                           A   122    .type 65
+                           A   123    .type 0
+                           A   124    .endef
+                           A   125    .begfunc "send_SPI",32,"_send_SPI"
+                           A   126    .define "data"
+                           A   127    .class 17
+                           A   128    .reg 9
+                           A   129    .type 2
+                           A   130    .type 0
+                           A   131    .endef
+                           A   132    ;   30	
+                           A   133    ;   31	void send_SPI(char data)
+                           A   134    ;   32	{
+                           A   135    .define "t"
+                           A   136    .class 4
+                           A   137    .reg 1
+                           A   138    .type 12
+                           A   139    .type 0
+                           A   140    .endef
+000024 70EF                A   141    	PUSH	R15
+000026 84FFFF              A   142    	LDX	R15,4095
+000029 70ED                A   143    	PUSH	R13
+                           A   144    ;   33		unsigned char t;
+                           A   145    ;   34	
+                           A   146    ;   35		DI();
+                           A   147    .line 35
+00002B 8F                  A   148    	DI
+                           A   149    ;   36	
+                           A   150    ;   37		//SPIDATA = 0x00;
+                           A   151    ;   38	
+                           A   152    ;   39		SPIMODE &= ~SSV;                        // Slave Select: Clear SS low to select ADE7758
+                           A   153    .line 39
+00002C 59FE0F63            A   154    	ANDX	3939,#-2
+                           A   155    ;   40		SPI_TDRE();                                     // Wait for Transmit Buffer Empty
+                           A   156    .line 40
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   4
+
+
+PC     Object              I  Line    Source spi.src
+000030 D78FFF              A   157    	LD	-1(R15),R8
+000033 D6 018E             A   158    	CALL	_SPI_TDRE
+000036 C78FFF              A   159    	LD	R8,-1(R15)
+                           A   160    ;   41		t=2; while(--t);                        // Delay 100ns
+                           A   161    .line 41
+000039 0C02                A   162    	LD	R0,#2
+00003B                     A   163    _2_L_1:
+00003B 0A FE               A   164    	DJNZ	R0,_2_L_1
+                           A   165    ;   42	
+                           A   166    ;   43		SPIDATA = data;
+                           A   167    .line 43
+00003D 948F60              A   168    	LDX	3936,R8
+                           A   169    ;   44		SPI_TDRE();                                     // Wait for Transmit Buffer Empty
+                           A   170    .line 44
+000040 D6 018E             A   171    	CALL	_SPI_TDRE
+                           A   172    ;   45	
+                           A   173    ;   46		SPIMODE |= SSV;                         // Slave Select: Set SS high to deselect ADE775
+                           A   174    .line 46
+000043 49010F63            A   175    	ORX	3939,#1
+                           A   176    ;   47		SPIDATA = 0x00;
+                           A   177    .line 47
+000047 E9000F60            A   178    	LDX	3936,#-0
+                           A   179    ;   48		EI();
+                           A   180    .line 48
+00004B 9F                  A   181    	EI
+                           A   182    ;   49	}
+                           A   183    .line 49
+00004C 50ED                A   184    	POP	R13
+00004E 50EF                A   185    	POP	R15
+000050 AF                  A   186    	RET	
+                           A   187    .endfunc "send_SPI",49,"_send_SPI"
+                           A   188    	SEGMENT ROM_DATA
+                           A   189    
+                           A   190    
+                           A   191    ;**************************** _read_SPI ***************************
+                           A   192    ;Name                         Addr/Register   Size   Type
+                           A   193    ;_EI                                 IMPORT  -----   function
+                           A   194    ;_SPI_TDRE                           STATIC  -----   function
+                           A   195    ;_DI                                 IMPORT  -----   function
+                           A   196    ;t                                       R0      0   variable
+                           A   197    ;i                                      RR2      1   variable
+                           A   198    ;data                                    R8      0   parameter
+                           A   199    
+                           A   200    
+                           A   201    ; Aggregate Stack Size: -3 (words)
+                           A   202    
+                           A   203    
+                           A   204    	.FRAME _n_read_SPI,?_n_read_SPI,RDATA
+                           A   205    	.FCALL _n_SPI_TDRE
+                           A   206    	SEGMENT spi_TEXT
+000051                     A   207    _read_SPI:
+                           A   208    .define "_read_SPI"
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   5
+
+
+PC     Object              I  Line    Source spi.src
+                           A   209    .value _read_SPI
+                           A   210    .class 2
+                           A   211    .type 65
+                           A   212    .type 0
+                           A   213    .endef
+                           A   214    .begfunc "read_SPI",52,"_read_SPI"
+                           A   215    .define "data"
+                           A   216    .class 17
+                           A   217    .reg 9
+                           A   218    .type 140
+                           A   219    .type 0
+                           A   220    .endef
+                           A   221    ;   50	
+                           A   222    ;   51	void read_SPI(unsigned char* data)
+                           A   223    ;   52	{
+                           A   224    .define "i"
+                           A   225    .class 4
+                           A   226    .reg 18
+                           A   227    .type 13
+                           A   228    .type 0
+                           A   229    .endef
+                           A   230    .define "t"
+                           A   231    .class 4
+                           A   232    .reg 1
+                           A   233    .type 12
+                           A   234    .type 0
+                           A   235    .endef
+000051 70EF                A   236    	PUSH	R15
+000053 84FFFF              A   237    	LDX	R15,4095
+000056 29030FFF            A   238    	SUBX	4095,#3
+                           A   239    ;   53		unsigned int i = 0;
+                           A   240    .line 53
+00005A B0E2                A   241    	CLR	R2
+00005C B0E3                A   242    	CLR	R3
+                           A   243    ;   54		unsigned char t;
+                           A   244    ;   55	
+                           A   245    ;   56		DI();
+                           A   246    .line 56
+00005E 8F                  A   247    	DI
+                           A   248    ;   57	
+                           A   249    ;   58		SPIMODE &= ~SSV;                        // Slave Select: Clear SS low to select ADE7758
+                           A   250    .line 58
+00005F 59FE0F63            A   251    	ANDX	3939,#-2
+                           A   252    ;   59		SPI_TDRE();                                     // Wait for Transmit Buffer Empty
+                           A   253    .line 59
+000063 D78FFF              A   254    	LD	-1(R15),R8
+000066 D72FFE              A   255    	LD	-2(R15),R2
+000069 D73FFD              A   256    	LD	-3(R15),R3
+00006C D6 018E             A   257    	CALL	_SPI_TDRE
+00006F C73FFD              A   258    	LD	R3,-3(R15)
+000072 C72FFE              A   259    	LD	R2,-2(R15)
+000075 C78FFF              A   260    	LD	R8,-1(R15)
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   6
+
+
+PC     Object              I  Line    Source spi.src
+                           A   261    ;   60	
+                           A   262    ;   61		t=100; while(--t);                      // Delay >5us
+                           A   263    .line 61
+000078 0C64                A   264    	LD	R0,#100
+00007A                     A   265    _3_L_5:
+00007A 0A FE               A   266    	DJNZ	R0,_3_L_5
+00007C 8B 0B               A   267    	JR	_3_L_9
+                           A   268    ;   62	
+                           A   269    ;   63	    for (i=0; i<2; i++)
+00007E                     A   270    _3_L_10:
+                           A   271    .line 63
+00007E A6E302              A   272    	CP	R3,#2
+000081 1FA6E200            A   273    	CPC	R2,#-0
+000085 7B 08               A   274    	JR	C,_3_L_12
+000087 8B 27               A   275    	JR	_3_L_14
+000089                     A   276    _3_L_9:
+000089 B0E2                A   277    	CLR	R2
+00008B B0E3                A   278    	CLR	R3
+00008D 8B EF               A   279    	JR	_3_L_10
+00008F                     A   280    _3_L_12:
+                           A   281    ;   64	    {
+                           A   282    ;   65	            //zzSPIDATA = 0xF0;                 // Dummy write forces data onto DOUT line (
+                           A   283    ;   66	            SPI_TDRE();                             // Wait for Transmit Buffer Empty
+                           A   284    .line 66
+00008F D78FFF              A   285    	LD	-1(R15),R8
+000092 D72FFE              A   286    	LD	-2(R15),R2
+000095 D73FFD              A   287    	LD	-3(R15),R3
+000098 D6 018E             A   288    	CALL	_SPI_TDRE
+00009B C73FFD              A   289    	LD	R3,-3(R15)
+00009E C72FFE              A   290    	LD	R2,-2(R15)
+0000A1 C78FFF              A   291    	LD	R8,-1(R15)
+                           A   292    ;   67	            *data-- = SPIDATA;              // Read data byte(s) from SPI Data Register
+                           A   293    .line 67
+0000A4 E4E8E0              A   294    	LD	R0,R8
+0000A7 850F60              A   295    	LDX	@R0,3936
+0000AA 30E8                A   296    	DEC	R8
+                           A   297    .line 63
+0000AC A0E2                A   298    	INCW	RR2
+                           A   299    ;   68	    }
+                           A   300    .line 68
+0000AE 8B CE               A   301    	JR	_3_L_10
+0000B0                     A   302    _3_L_14:
+                           A   303    ;   69		//SPIDATA = 0xF0;                 // Dummy write forces data onto DOUT line (into MISO)
+                           A   304    ;   70		//SPI_RDRE();                             // Wait for Transmit Buffer Empty
+                           A   305    ;   71		//data = SPIDATA;              // Read data byte(s) from SPI Data Register
+                           A   306    ;   72	
+                           A   307    ;   73		SPIMODE |= SSV;                         // Slave Select: Set SS high to deselect ADE775
+                           A   308    .line 73
+0000B0 49010F63            A   309    	ORX	3939,#1
+                           A   310    ;   74	
+                           A   311    ;   75		SPIDATA = 0x00;
+                           A   312    .line 75
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   7
+
+
+PC     Object              I  Line    Source spi.src
+0000B4 E9000F60            A   313    	LDX	3936,#-0
+                           A   314    ;   76	
+                           A   315    ;   77		EI();
+                           A   316    .line 77
+0000B8 9F                  A   317    	EI
+                           A   318    ;   78	}
+                           A   319    .line 78
+0000B9 94FFFF              A   320    	LDX	4095,R15
+0000BC 50EF                A   321    	POP	R15
+0000BE AF                  A   322    	RET	
+                           A   323    .endfunc "read_SPI",78,"_read_SPI"
+                           A   324    	SEGMENT ROM_DATA
+                           A   325    
+                           A   326    
+                           A   327    ;**************************** _waitForFullBuf ***************************
+                           A   328    ;Name                         Addr/Register   Size   Type
+                           A   329    ;_SPI_RDRE                           STATIC  -----   function
+                           A   330    
+                           A   331    
+                           A   332    ; Aggregate Stack Size: 0 (words)
+                           A   333    
+                           A   334    
+                           A   335    	.FRAME _n_waitForFullBuf,?_n_waitForFullBuf,RDATA
+                           A   336    	.FCALL _n_SPI_RDRE
+                           A   337    	SEGMENT spi_TEXT
+0000BF                     A   338    _waitForFullBuf:
+                           A   339    .define "_waitForFullBuf"
+                           A   340    .value _waitForFullBuf
+                           A   341    .class 2
+                           A   342    .type 65
+                           A   343    .type 0
+                           A   344    .endef
+                           A   345    .begfunc "waitForFullBuf",81,"_waitForFullBuf"
+0000BF 70EF                A   346    	PUSH	R15
+0000C1 84FFFF              A   347    	LDX	R15,4095
+                           A   348    ;   79	
+                           A   349    ;   80	void waitForFullBuf()
+                           A   350    ;   81	{
+                           A   351    ;   82		SPI_RDRE();
+                           A   352    .line 82
+0000C4 D6 019C             A   353    	CALL	_SPI_RDRE
+                           A   354    ;   83	}
+                           A   355    .line 83
+0000C7 50EF                A   356    	POP	R15
+0000C9 AF                  A   357    	RET	
+                           A   358    .endfunc "waitForFullBuf",83,"_waitForFullBuf"
+                           A   359    	SEGMENT ROM_DATA
+                           A   360    
+                           A   361    
+                           A   362    ;**************************** _ADEWrite ***************************
+                           A   363    ;Name                         Addr/Register   Size   Type
+                           A   364    ;_EI                                 IMPORT  -----   function
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   8
+
+
+PC     Object              I  Line    Source spi.src
+                           A   365    ;_SPI_TDRE                           STATIC  -----   function
+                           A   366    ;_DI                                 IMPORT  -----   function
+                           A   367    ;t                                       R0      0   variable
+                           A   368    ;i                                       R1      0   variable
+                           A   369    ;count                                  R10      0   parameter
+                           A   370    ;data                                    R9      0   parameter
+                           A   371    ;addr                                    R8      0   parameter
+                           A   372    
+                           A   373    
+                           A   374    ; Aggregate Stack Size: -3 (words)
+                           A   375    
+                           A   376    
+                           A   377    	.FRAME _n_ADEWrite,?_n_ADEWrite,RDATA
+                           A   378    	.FCALL _n_SPI_TDRE
+                           A   379    	SEGMENT spi_TEXT
+0000CA                     A   380    _ADEWrite:
+                           A   381    .define "_ADEWrite"
+                           A   382    .value _ADEWrite
+                           A   383    .class 2
+                           A   384    .type 65
+                           A   385    .type 0
+                           A   386    .endef
+                           A   387    .begfunc "ADEWrite",92,"_ADEWrite"
+                           A   388    .define "addr"
+                           A   389    .class 17
+                           A   390    .reg 9
+                           A   391    .type 12
+                           A   392    .type 0
+                           A   393    .endef
+                           A   394    .define "data"
+                           A   395    .class 17
+                           A   396    .reg 10
+                           A   397    .type 140
+                           A   398    .type 0
+                           A   399    .endef
+                           A   400    .define "count"
+                           A   401    .class 17
+                           A   402    .reg 11
+                           A   403    .type 12
+                           A   404    .type 0
+                           A   405    .endef
+                           A   406    ;   84	
+                           A   407    ;   85	/*-------------------------------------------------------------------------------
+                           A   408    ;   86	** Routine: ADEWrite
+                           A   409    ;   87	** Parameters: register address, data to write, no of bytes to write
+                           A   410    ;   88	** Return: void
+                           A   411    ;   89	** Purpose: Write data byte(s) to designated ADE7758 register
+                           A   412    ;   90	--------------------------------------------------------------------------------*/
+                           A   413    ;   91	void ADEWrite (unsigned char addr, unsigned char *data, unsigned char count)
+                           A   414    ;   92	{
+                           A   415    .define "i"
+                           A   416    .class 4
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:   9
+
+
+PC     Object              I  Line    Source spi.src
+                           A   417    .reg 2
+                           A   418    .type 12
+                           A   419    .type 0
+                           A   420    .endef
+                           A   421    .define "t"
+                           A   422    .class 4
+                           A   423    .reg 1
+                           A   424    .type 12
+                           A   425    .type 0
+                           A   426    .endef
+0000CA 70EF                A   427    	PUSH	R15
+0000CC 84FFFF              A   428    	LDX	R15,4095
+0000CF 29030FFF            A   429    	SUBX	4095,#3
+                           A   430    ;   93	        unsigned char i;
+                           A   431    ;   94	        unsigned char t;
+                           A   432    ;   95	
+                           A   433    ;   96	        DI();                                           // Disable interrupts
+                           A   434    .line 96
+0000D3 8F                  A   435    	DI
+                           A   436    ;   97	        SPIMODE &= ~SSV;                        // Slave Select: Clear SS low to select ADE
+                           A   437    .line 97
+0000D4 59FE0F63            A   438    	ANDX	3939,#-2
+                           A   439    ;   98	        SPIDATA = (addr | MSB);         // Write address to SPI Data Register, MSB =1
+                           A   440    .line 98
+0000D8 E2F8                A   441    	BSET	7,R8
+0000DA 948F60              A   442    	LDX	3936,R8
+                           A   443    ;   99	        SPI_TDRE();                                     // Wait for Transmit Buffer Empty
+                           A   444    .line 99
+0000DD D79FFF              A   445    	LD	-1(R15),R9
+0000E0 D7AFFE              A   446    	LD	-2(R15),R10
+0000E3 D71FFD              A   447    	LD	-3(R15),R1
+0000E6 D6 018E             A   448    	CALL	_SPI_TDRE
+0000E9 C71FFD              A   449    	LD	R1,-3(R15)
+0000EC C7AFFE              A   450    	LD	R10,-2(R15)
+0000EF C79FFF              A   451    	LD	R9,-1(R15)
+                           A   452    ;  100	       
+                           A   453    ;  101	        t=2; while(--t);                        // Delay 100ns
+                           A   454    .line 101
+0000F2 0C02                A   455    	LD	R0,#2
+0000F4                     A   456    _5_L_17:
+0000F4 0A FE               A   457    	DJNZ	R0,_5_L_17
+0000F6 8B 06               A   458    	JR	_5_L_21
+                           A   459    ;  102	       
+                           A   460    ;  103	        for (i=0; i<count; i++)
+0000F8                     A   461    _5_L_22:
+                           A   462    .line 103
+0000F8 A21A                A   463    	CP	R1,R10
+0000FA 7B 06               A   464    	JR	C,_5_L_24
+0000FC 8B 21               A   465    	JR	_5_L_26
+0000FE                     A   466    _5_L_21:
+0000FE B0E1                A   467    	CLR	R1
+000100 8B F6               A   468    	JR	_5_L_22
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:  10
+
+
+PC     Object              I  Line    Source spi.src
+000102                     A   469    _5_L_24:
+                           A   470    ;  104	        {
+                           A   471    ;  105	                SPIDATA = *data--;              // Write data byte(s) to SPI Data Register
+                           A   472    .line 105
+000102 E4E9E0              A   473    	LD	R0,R9
+000105 950F60              A   474    	LDX	3936,@R0
+000108 30E9                A   475    	DEC	R9
+                           A   476    ;  106	                SPI_TDRE();                             // Wait for Transmit Buffer Empty
+                           A   477    .line 106
+00010A D79FFF              A   478    	LD	-1(R15),R9
+00010D D71FFD              A   479    	LD	-3(R15),R1
+000110 D6 018E             A   480    	CALL	_SPI_TDRE
+000113 C71FFD              A   481    	LD	R1,-3(R15)
+000116 C7AFFE              A   482    	LD	R10,-2(R15)
+000119 C79FFF              A   483    	LD	R9,-1(R15)
+                           A   484    .line 103
+00011C 1E                  A   485    	INC	R1
+                           A   486    ;  107	        }
+                           A   487    .line 107
+00011D 8B D9               A   488    	JR	_5_L_22
+00011F                     A   489    _5_L_26:
+                           A   490    ;  108	
+                           A   491    ;  109	        SPIMODE |= SSV;                         // Slave Select: Set SS high to deselect AD
+                           A   492    .line 109
+00011F 49010F63            A   493    	ORX	3939,#1
+                           A   494    ;  110	        EI();                                           // Re-establish interrupts
+                           A   495    .line 110
+000123 9F                  A   496    	EI
+                           A   497    ;  111	}
+                           A   498    .line 111
+000124 94FFFF              A   499    	LDX	4095,R15
+000127 50EF                A   500    	POP	R15
+000129 AF                  A   501    	RET	
+                           A   502    .endfunc "ADEWrite",111,"_ADEWrite"
+                           A   503    	SEGMENT ROM_DATA
+                           A   504    
+                           A   505    
+                           A   506    ;**************************** _ADERead ***************************
+                           A   507    ;Name                         Addr/Register   Size   Type
+                           A   508    ;_EI                                 IMPORT  -----   function
+                           A   509    ;_SPI_TDRE                           STATIC  -----   function
+                           A   510    ;_DI                                 IMPORT  -----   function
+                           A   511    ;t                                       R0      0   variable
+                           A   512    ;i                                       R1      0   variable
+                           A   513    ;count                                  R10      0   parameter
+                           A   514    ;data                                    R9      0   parameter
+                           A   515    ;addr                                    R8      0   parameter
+                           A   516    
+                           A   517    
+                           A   518    ; Aggregate Stack Size: -3 (words)
+                           A   519    
+                           A   520    
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:  11
+
+
+PC     Object              I  Line    Source spi.src
+                           A   521    	.FRAME _n_ADERead,?_n_ADERead,RDATA
+                           A   522    	.FCALL _n_SPI_TDRE
+                           A   523    	SEGMENT spi_TEXT
+00012A                     A   524    _ADERead:
+                           A   525    .define "_ADERead"
+                           A   526    .value _ADERead
+                           A   527    .class 2
+                           A   528    .type 65
+                           A   529    .type 0
+                           A   530    .endef
+                           A   531    .begfunc "ADERead",120,"_ADERead"
+                           A   532    .define "addr"
+                           A   533    .class 17
+                           A   534    .reg 9
+                           A   535    .type 12
+                           A   536    .type 0
+                           A   537    .endef
+                           A   538    .define "data"
+                           A   539    .class 17
+                           A   540    .reg 10
+                           A   541    .type 140
+                           A   542    .type 0
+                           A   543    .endef
+                           A   544    .define "count"
+                           A   545    .class 17
+                           A   546    .reg 11
+                           A   547    .type 12
+                           A   548    .type 0
+                           A   549    .endef
+                           A   550    ;  112	
+                           A   551    ;  113	/*-------------------------------------------------------------------------------
+                           A   552    ;  114	** Routine: ADERead
+                           A   553    ;  115	** Parameters: register address, data to read, no of bytes to read
+                           A   554    ;  116	** Return: None
+                           A   555    ;  117	** Purpose: Read data byte(s) from designated ADE7758 register
+                           A   556    ;  118	--------------------------------------------------------------------------------*/
+                           A   557    ;  119	void ADERead (unsigned char addr, unsigned char *data, unsigned char count)
+                           A   558    ;  120	{
+                           A   559    .define "i"
+                           A   560    .class 4
+                           A   561    .reg 2
+                           A   562    .type 12
+                           A   563    .type 0
+                           A   564    .endef
+                           A   565    .define "t"
+                           A   566    .class 4
+                           A   567    .reg 1
+                           A   568    .type 12
+                           A   569    .type 0
+                           A   570    .endef
+00012A 70EF                A   571    	PUSH	R15
+00012C 84FFFF              A   572    	LDX	R15,4095
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:  12
+
+
+PC     Object              I  Line    Source spi.src
+00012F 29030FFF            A   573    	SUBX	4095,#3
+                           A   574    ;  121	        unsigned char i;
+                           A   575    ;  122	        unsigned char t;
+                           A   576    ;  123	
+                           A   577    ;  124	        DI();                                           // Disable interrupts
+                           A   578    .line 124
+000133 8F                  A   579    	DI
+                           A   580    ;  125	        SPIMODE &= ~SSV;                        // Slave Select: Clear SS low to select ADE
+                           A   581    .line 125
+000134 59FE0F63            A   582    	ANDX	3939,#-2
+                           A   583    ;  126	        SPIDATA = (addr & ~MSB);        // Write Address to SPI Data Reg, MSB =0.
+                           A   584    .line 126
+000138 E278                A   585    	BCLR	7,R8
+00013A 948F60              A   586    	LDX	3936,R8
+                           A   587    ;  127	        SPI_TDRE();                                     // Wait for Transmit Buffer Empty
+                           A   588    .line 127
+00013D D79FFF              A   589    	LD	-1(R15),R9
+000140 D7AFFE              A   590    	LD	-2(R15),R10
+000143 D71FFD              A   591    	LD	-3(R15),R1
+000146 D6 018E             A   592    	CALL	_SPI_TDRE
+000149 C71FFD              A   593    	LD	R1,-3(R15)
+00014C C7AFFE              A   594    	LD	R10,-2(R15)
+00014F C79FFF              A   595    	LD	R9,-1(R15)
+                           A   596    ;  128	       
+                           A   597    ;  129	        t=100; while(--t);                      // Delay >5us
+                           A   598    .line 129
+000152 0C64                A   599    	LD	R0,#100
+000154                     A   600    _6_L_28:
+000154 0A FE               A   601    	DJNZ	R0,_6_L_28
+000156 8B 06               A   602    	JR	_6_L_32
+                           A   603    ;  130	
+                           A   604    ;  131	        for (i=0; i<count; i++)
+000158                     A   605    _6_L_33:
+                           A   606    .line 131
+000158 A21A                A   607    	CP	R1,R10
+00015A 7B 06               A   608    	JR	C,_6_L_35
+00015C 8B 25               A   609    	JR	_6_L_37
+00015E                     A   610    _6_L_32:
+00015E B0E1                A   611    	CLR	R1
+000160 8B F6               A   612    	JR	_6_L_33
+000162                     A   613    _6_L_35:
+                           A   614    ;  132	        {
+                           A   615    ;  133	                SPIDATA = 0xF0;                 // Dummy write forces data onto DOUT line (
+                           A   616    .line 133
+000162 E9F00F60            A   617    	LDX	3936,#240
+                           A   618    ;  134	                SPI_TDRE();                             // Wait for Transmit Buffer Empty
+                           A   619    .line 134
+000166 D79FFF              A   620    	LD	-1(R15),R9
+000169 D71FFD              A   621    	LD	-3(R15),R1
+00016C D6 018E             A   622    	CALL	_SPI_TDRE
+00016F C71FFD              A   623    	LD	R1,-3(R15)
+000172 C7AFFE              A   624    	LD	R10,-2(R15)
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:  13
+
+
+PC     Object              I  Line    Source spi.src
+000175 C79FFF              A   625    	LD	R9,-1(R15)
+                           A   626    ;  135	                *data-- = SPIDATA;              // Read data byte(s) from SPI Data Register
+                           A   627    .line 135
+000178 E4E9E0              A   628    	LD	R0,R9
+00017B 850F60              A   629    	LDX	@R0,3936
+00017E 30E9                A   630    	DEC	R9
+                           A   631    .line 131
+000180 1E                  A   632    	INC	R1
+                           A   633    ;  136	        }
+                           A   634    .line 136
+000181 8B D5               A   635    	JR	_6_L_33
+000183                     A   636    _6_L_37:
+                           A   637    ;  137	       
+                           A   638    ;  138	        SPIMODE |= SSV;                         // Slave Select: Set SS high to deselect AD
+                           A   639    .line 138
+000183 49010F63            A   640    	ORX	3939,#1
+                           A   641    ;  139	        EI();                                           // Re-establish interrupts ??
+                           A   642    .line 139
+000187 9F                  A   643    	EI
+                           A   644    ;  140	}
+                           A   645    .line 140
+000188 94FFFF              A   646    	LDX	4095,R15
+00018B 50EF                A   647    	POP	R15
+00018D AF                  A   648    	RET	
+                           A   649    .endfunc "ADERead",140,"_ADERead"
+                           A   650    	SEGMENT ROM_DATA
+                           A   651    
+                           A   652    
+                           A   653    ;**************************** _SPI_TDRE ***************************
+                           A   654    ;Name                         Addr/Register   Size   Type
+                           A   655    
+                           A   656    
+                           A   657    ; Aggregate Stack Size: 0 (words)
+                           A   658    
+                           A   659    
+                           A   660    	.FRAME _n_SPI_TDRE,?_n_SPI_TDRE,RDATA
+                           A   661    	SEGMENT spi_TEXT
+00018E                     A   662    _SPI_TDRE:
+                           A   663    .define "_SPI_TDRE"
+                           A   664    .value _SPI_TDRE
+                           A   665    .class 3
+                           A   666    .type 65
+                           A   667    .type 0
+                           A   668    .endef
+                           A   669    .begfunc "SPI_TDRE",149,"_SPI_TDRE"
+00018E 70EF                A   670    	PUSH	R15
+000190 84FFFF              A   671    	LDX	R15,4095
+                           A   672    ;  141	
+                           A   673    ;  142	/*-------------------------------------------------------------------------------
+                           A   674    ;  143	**  Routine: SPI_TDRE
+                           A   675    ;  144	**  Parameters: void
+                           A   676    ;  145	**  Return: void
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:  14
+
+
+PC     Object              I  Line    Source spi.src
+                           A   677    ;  146	**  Purpose: Poll waiting for the Transmit Data Register to empty
+                           A   678    ;  147	--------------------------------------------------------------------------------*/
+                           A   679    ;  148	static void SPI_TDRE (void)
+                           A   680    ;  149	{
+                           A   681    ;  150	//    while ((SPISTAT & TXST) == 0x00);       //Wait for Transmit Buffer Full
+                           A   682    ;  151	    while ((SPISTAT & TXST) == TXST);       //Wait for Transmit Buffer Empty
+000193                     A   683    _7_L_39:
+                           A   684    .line 151
+000193 69020F62            A   685    	TCMX	3938,#2
+000197 6B FA               A   686    	JR	Z,_7_L_39
+                           A   687    ;  152	}
+                           A   688    .line 152
+000199 50EF                A   689    	POP	R15
+00019B AF                  A   690    	RET	
+                           A   691    .endfunc "SPI_TDRE",152,"_SPI_TDRE"
+                           A   692    	SEGMENT ROM_DATA
+                           A   693    
+                           A   694    
+                           A   695    ;**************************** _SPI_RDRE ***************************
+                           A   696    ;Name                         Addr/Register   Size   Type
+                           A   697    
+                           A   698    
+                           A   699    ; Aggregate Stack Size: 0 (words)
+                           A   700    
+                           A   701    
+                           A   702    	.FRAME _n_SPI_RDRE,?_n_SPI_RDRE,RDATA
+                           A   703    	SEGMENT spi_TEXT
+00019C                     A   704    _SPI_RDRE:
+                           A   705    .define "_SPI_RDRE"
+                           A   706    .value _SPI_RDRE
+                           A   707    .class 3
+                           A   708    .type 65
+                           A   709    .type 0
+                           A   710    .endef
+                           A   711    .begfunc "SPI_RDRE",155,"_SPI_RDRE"
+00019C 70EF                A   712    	PUSH	R15
+00019E 84FFFF              A   713    	LDX	R15,4095
+                           A   714    ;  153	
+                           A   715    ;  154	static void SPI_RDRE(void)
+                           A   716    ;  155	{
+                           A   717    ;  156	    while ((SPISTAT & TXST) == 0x00);       //Wait for Transmit Buffer Full
+0001A1                     A   718    _8_L_42:
+                           A   719    .line 156
+0001A1 79020F62            A   720    	TMX	3938,#2
+0001A5 6B FA               A   721    	JR	Z,_8_L_42
+                           A   722    ;  157	}
+                           A   723    .line 157
+0001A7 50EF                A   724    	POP	R15
+0001A9 AF                  A   725    	RET	
+                           A   726    .endfunc "SPI_RDRE",157,"_SPI_RDRE"
+                           A   727    	XDEF _ADERead
+                           A   728    	XDEF _ADEWrite
+Zilog Z8 Encore! Macro Assembler Version 2.50 (08031703)                                         15-May-10     13:00:23     page:  15
+
+
+PC     Object              I  Line    Source spi.src
+                           A   729    	XDEF _waitForFullBuf
+                           A   730    	XDEF _read_SPI
+                           A   731    	XDEF _send_SPI
+                           A   732    	XDEF _Init_SPI
+                           A   733    	END
+
+
+Errors: 0
+Warnings: 0
+Lines Assembled: 734
